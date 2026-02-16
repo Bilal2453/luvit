@@ -68,7 +68,7 @@ return function (main, ...)
     uv.run()
   else
     _G.process.exitCode = -1
-    require('pretty-print').stderr:write("Uncaught exception:\n" .. err .. "\n")
+    require('pretty-print').stderr:write("Uncaught exception:\n" .. tostring(err) .. "\n")
   end
 
   local function isFileHandle(handle, name, fd)
