@@ -17,7 +17,7 @@ limitations under the License.
 --]]
 --[[lit-meta
   name = "luvit/require"
-  version = "2.2.4"
+  version = "2.2.5"
   homepage = "https://github.com/luvit/luvit/blob/master/deps/require.lua"
   description = "Luvit's custom require system with relative requires and sane search paths."
   tags = {"luvit", "require"}
@@ -255,11 +255,16 @@ end
 function Module:resolve(name)
   assert(name, "Missing name to resolve")
   local debundled_name = name:match("^bundle:(.*)") or name
-  if debundled_name:byte(1) == 46 then -- Starts with "."
+  local prefix = debundled_name:byte(1)
+  -- If it starts with "." it's a relative path
+  if prefix == 46 then
     return fixedRequire(pathJoin(self.dir, name))
-  elseif debundled_name:byte(1) == 47 then -- Starts with "/"
+  end
+  -- If it starts with "/" or "x:/" it's a fixed path
+  if prefix == 47 or debundled_name:match('^%a:/') then
     return fixedRequire(name)
   end
+  -- Otherwise, it's a module name
   return moduleRequire(self.dir, name)
 end
 
